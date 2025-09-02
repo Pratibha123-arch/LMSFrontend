@@ -1,602 +1,272 @@
-import React, { useState, useContext } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, { useState } from "react";
 import axios from "axios";
 
-const AddCourse = () => {
-  const { token, user } = useContext(AppContext);
-
-  const [courseData, setCourseData] = useState({
+export default function AddCourse() {
+  const [form, setForm] = useState({
     title: "",
     description: "",
-    shortDescription: "",
-    teacher: user?._id || "",
     category: "programming",
     level: "beginner",
     price: 0,
-    currency: "USD",
-    duration: 0,
-    tags: [],
-    prerequisites: [],
-    learningOutcomes: [],
+    duration: 60,
+    learningOutcomes: [""],
     chapters: [],
-    thumbnail: "", // URL string
   });
 
-  const [activeChapter, setActiveChapter] = useState(null);
-  const [activeSubchapter, setActiveSubchapter] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
+  // ===== Course fields =====
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCourseData((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const toggleChapter = (index) =>
-    setActiveChapter(activeChapter === index ? null : index);
-
-  const toggleSubchapter = (cIndex, sIndex) => {
-    const key = `${cIndex}-${sIndex}`;
-    setActiveSubchapter((prev) => ({ ...prev, [key]: !prev[key] }));
+  const handleOutcomeChange = (index, value) => {
+    const updated = [...form.learningOutcomes];
+    updated[index] = value;
+    setForm((prev) => ({ ...prev, learningOutcomes: updated }));
   };
 
-  const handleAddChapter = () => {
-    setCourseData((prev) => ({
+  const addOutcome = () => {
+    setForm((prev) => ({ ...prev, learningOutcomes: [...prev.learningOutcomes, ""] }));
+  };
+
+  // ===== Chapters =====
+  const addChapter = () => {
+    setForm((prev) => ({
       ...prev,
-      chapters: [
-        ...prev.chapters,
-        {
-          title: "",
-          description: "",
-          order: prev.chapters.length + 1,
-          subchapters: [],
-        },
-      ],
+      chapters: [...prev.chapters, { title: "", description: "", order: prev.chapters.length + 1, subchapters: [] }],
     }));
   };
 
   const handleChapterChange = (index, field, value) => {
-    const updated = [...courseData.chapters];
+    const updated = [...form.chapters];
     updated[index][field] = value;
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
+    setForm((prev) => ({ ...prev, chapters: updated }));
   };
 
-  const handleAddSubchapter = (cIndex) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters.push({
+  // ===== Subchapters =====
+  const addSubchapter = (chapterIndex) => {
+    const updated = [...form.chapters];
+    const chapter = updated[chapterIndex];
+    chapter.subchapters.push({
       title: "",
       description: "",
-      order: updated[cIndex].subchapters.length + 1,
+      order: chapter.subchapters.length + 1,
       topics: [],
     });
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
+    setForm((prev) => ({ ...prev, chapters: updated }));
   };
 
-  const handleSubchapterChange = (cIndex, sIndex, field, value) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex][field] = value;
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
+  const handleSubchapterChange = (chapterIndex, subIndex, field, value) => {
+    const updated = [...form.chapters];
+    updated[chapterIndex].subchapters[subIndex][field] = value;
+    setForm((prev) => ({ ...prev, chapters: updated }));
   };
 
-  const handleAddTopic = (cIndex, sIndex) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics.push({
+  // ===== Topics =====
+  const addTopic = (chapterIndex, subIndex) => {
+    const updated = [...form.chapters];
+    updated[chapterIndex].subchapters[subIndex].topics.push({
       title: "",
       content: "",
       videoUrl: "",
       duration: 0,
-      order: updated[cIndex].subchapters[sIndex].topics.length + 1,
+      order: updated[chapterIndex].subchapters[subIndex].topics.length + 1,
       resources: [],
-      quiz: { questions: [], passingScore: 70, maxAttempts: 3 },
+      quiz: {},
+      tags: [],
+      prerequisites: [],
     });
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
+    setForm((prev) => ({ ...prev, chapters: updated }));
   };
 
-  const handleTopicChange = (cIndex, sIndex, tIndex, field, value) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics[tIndex][field] = value;
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
+  const handleTopicChange = (chapterIndex, subIndex, topicIndex, field, value) => {
+    const updated = [...form.chapters];
+    updated[chapterIndex].subchapters[subIndex].topics[topicIndex][field] = value;
+    setForm((prev) => ({ ...prev, chapters: updated }));
   };
 
-  const handleAddResource = (cIndex, sIndex, tIndex) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics[tIndex].resources.push({
-      title: "",
-      url: "",
-      type: "link",
-    });
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
-  };
-
-  const handleResourceChange = (
-    cIndex,
-    sIndex,
-    tIndex,
-    rIndex,
-    field,
-    value
-  ) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics[tIndex].resources[rIndex][
-      field
-    ] = value;
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
-  };
-
-  const handleAddQuiz = (cIndex, sIndex, tIndex) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics[tIndex].quiz.questions.push({
-      question: "",
-      options: [{ text: "", isCorrect: false }],
-    });
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
-  };
-
-  const handleQuizChange = (cIndex, sIndex, tIndex, qIndex, field, value) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics[tIndex].quiz.questions[qIndex][
-      field
-    ] = value;
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
-  };
-
-  const handleOptionChange = (
-    cIndex,
-    sIndex,
-    tIndex,
-    qIndex,
-    oIndex,
-    field,
-    value
-  ) => {
-    const updated = [...courseData.chapters];
-    updated[cIndex].subchapters[sIndex].topics[tIndex].quiz.questions[
-      qIndex
-    ].options[oIndex][field] = value;
-    setCourseData((prev) => ({ ...prev, chapters: updated }));
-  };
-
+  // ===== Submit =====
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccessMsg(null);
+
     try {
-      const formData = new FormData();
-      for (const key in courseData) {
-        if (key === "chapters")
-          formData.append(key, JSON.stringify(courseData[key]));
-        else formData.append(key, courseData[key]);
-      }
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("You must be logged in to create a course.");
 
-      const res = await axios.post(
-        "http://localhost:5000/api/courses",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const payload = {
+        ...form,
+        price: parseFloat(form.price),
+        duration: parseInt(form.duration, 10),
+        learningOutcomes: form.learningOutcomes.filter((o) => o.trim() !== ""),
+      };
 
-      alert("Course created successfully!");
-      console.log(res.data);
+      await axios.post("http://localhost:5000/api/courses", payload, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+
+      setSuccessMsg("Course created successfully!");
+      setForm({
+        title: "",
+        description: "",
+        category: "programming",
+        level: "beginner",
+        price: 0,
+        duration: 60,
+        learningOutcomes: [""],
+        chapters: [],
+      });
     } catch (err) {
-      console.error(
-        "Failed to create course:",
-        err.response?.data || err.message
-      );
-      alert("Failed to create course");
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!user) return <p>Loading...</p>;
-
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-start p-6">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-bold mb-6 text-center">Add New Course</h2>
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-center">Create Course</h2>
+
+        {error && <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>}
+        {successMsg && <div className="bg-green-100 text-green-700 p-2 rounded mb-4">{successMsg}</div>}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input
-              type="text"
-              name="title"
-              placeholder="Course Title"
-              value={courseData.title}
-              onChange={handleChange}
-              className="border p-3 w-full rounded"
-              required
-            />
-            <input
-              type="number"
-              name="price"
-              placeholder="Price in USD"
-              value={courseData.price}
-              onChange={handleChange}
-              className="border p-3 w-full rounded"
-              required
-            />
-            <input
-              type="number"
-              name="duration"
-              placeholder="Duration in minutes"
-              value={courseData.duration}
-              onChange={handleChange}
-              className="border p-3 w-full rounded"
-              required
-            />
+          {/* ===== Basic Info ===== */}
+          <div className="space-y-2">
+            <label className="font-semibold">Title</label>
+            <input name="title" value={form.title} onChange={handleChange} disabled={loading}
+              className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
           </div>
 
-          {/* Thumbnail URL */}
+          <div className="space-y-2">
+            <label className="font-semibold">Description</label>
+            <textarea name="description" rows={3} value={form.description} onChange={handleChange} disabled={loading}
+              className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="font-semibold">Category</label>
+              <select name="category" value={form.category} onChange={handleChange} disabled={loading}
+                className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                {["programming","design","business","marketing","photography","music","health","language","other"].map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="font-semibold">Level</label>
+              <select name="level" value={form.level} onChange={handleChange} disabled={loading}
+                className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                {["beginner","intermediate","advanced"].map(l => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* ===== Thumbnail ===== */}
+<div className="space-y-2">
+  <label className="font-semibold">Thumbnail URL</label>
+  <input
+    type="text"
+    name="thumbnail"
+    value={form.thumbnail || ""}
+    onChange={handleChange}
+    placeholder="https://example.com/image.jpg"
+    disabled={loading}
+    className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+  />
+  {form.thumbnail && (
+    <img src={form.thumbnail} alt="Thumbnail Preview" className="mt-2 w-40 h-24 object-cover rounded shadow" />
+  )}
+</div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="font-semibold">Price ($)</label>
+              <input type="number" name="price" value={form.price} onChange={handleChange} min="0" step="0.01" disabled={loading}
+                className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+            </div>
+            <div className="space-y-2">
+              <label className="font-semibold">Duration (minutes)</label>
+              <input type="number" name="duration" value={form.duration} onChange={handleChange} min="1" disabled={loading}
+                className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+            </div>
+          </div>
+
+          {/* ===== Learning Outcomes ===== */}
           <div>
-            <label className="block font-semibold mb-1">Thumbnail URL</label>
-            <input
-              type="text"
-              name="thumbnail"
-              placeholder="Paste image URL here"
-              value={courseData.thumbnail}
-              onChange={(e) =>
-                setCourseData((prev) => ({
-                  ...prev,
-                  thumbnail: e.target.value,
-                }))
-              }
-              className="border p-2 w-full rounded"
-            />
+            <label className="font-semibold">Learning Outcomes</label>
+            <div className="space-y-2">
+              {form.learningOutcomes.map((o, i) => (
+                <input key={i} value={o} onChange={(e) => handleOutcomeChange(i, e.target.value)} placeholder={`Outcome ${i + 1}`} disabled={loading}
+                  className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-green-400" required />
+              ))}
+            </div>
+            <button type="button" onClick={addOutcome} disabled={loading}
+              className="mt-2 text-sm text-green-700 hover:underline">+ Add Outcome</button>
           </div>
 
-          {/* Category & Level */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <select
-              name="category"
-              value={courseData.category}
-              onChange={handleChange}
-              className="border p-3 w-full rounded"
-            >
-              {[
-                "programming",
-                "design",
-                "business",
-                "marketing",
-                "photography",
-                "music",
-                "health",
-                "language",
-                "other",
-              ].map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
-            <select
-              name="level"
-              value={courseData.level}
-              onChange={handleChange}
-              className="border p-3 w-full rounded"
-            >
-              {["beginner", "intermediate", "advanced"].map((lvl) => (
-                <option key={lvl} value={lvl}>
-                  {lvl.charAt(0).toUpperCase() + lvl.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* ===== Chapters ===== */}
+          <div>
+            <label className="font-semibold">Chapters</label>
+            <div className="space-y-4">
+              {form.chapters.map((chapter, ci) => (
+                <div key={ci} className="p-4 border rounded space-y-2 bg-gray-50">
+                  <h4 className="font-bold">Chapter {ci + 1}</h4>
+                  <input placeholder="Title" value={chapter.title} onChange={(e) => handleChapterChange(ci, "title", e.target.value)} disabled={loading}
+                    className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+                  <textarea placeholder="Description" value={chapter.description} onChange={(e) => handleChapterChange(ci, "description", e.target.value)} disabled={loading} rows={2}
+                    className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
 
-          <textarea
-            name="description"
-            placeholder="Course Description"
-            value={courseData.description}
-            onChange={handleChange}
-            className="border p-3 w-full rounded"
-            rows={5}
-            required
-          />
+                  {/* Subchapters */}
+                  {chapter.subchapters.map((sub, si) => (
+                    <div key={si} className="ml-4 p-3 border rounded space-y-2 bg-white">
+                      <h5 className="font-semibold">Subchapter {si + 1}</h5>
+                      <input placeholder="Title" value={sub.title} onChange={(e) => handleSubchapterChange(ci, si, "title", e.target.value)} disabled={loading}
+                        className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <textarea placeholder="Description" value={sub.description} onChange={(e) => handleSubchapterChange(ci, si, "description", e.target.value)} disabled={loading} rows={2}
+                        className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400" required />
 
-          {/* Chapters */}
-          <div className="space-y-4 max-h-[500px] overflow-y-auto border p-4 rounded bg-gray-50">
-            <h3 className="font-semibold text-xl mb-3">Chapters</h3>
-            {courseData.chapters.map((chapter, cIndex) => (
-              <div key={cIndex} className="border rounded p-4 bg-white mb-3">
-                <div
-                  className="flex justify-between items-center cursor-pointer"
-                  onClick={() => toggleChapter(cIndex)}
-                >
-                  <h4 className="font-bold">
-                    {chapter.title || `Chapter ${cIndex + 1}`}
-                  </h4>
-                  <span>{activeChapter === cIndex ? "-" : "+"}</span>
-                </div>
-
-                {activeChapter === cIndex && (
-                  <div className="mt-3 space-y-3 max-h-[300px] overflow-y-auto">
-                    <input
-                      type="text"
-                      placeholder="Chapter Title"
-                      value={chapter.title}
-                      onChange={(e) =>
-                        handleChapterChange(cIndex, "title", e.target.value)
-                      }
-                      className="border p-2 w-full rounded"
-                      required
-                    />
-                    <textarea
-                      placeholder="Chapter Description"
-                      value={chapter.description}
-                      onChange={(e) =>
-                        handleChapterChange(
-                          cIndex,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      className="border p-2 w-full rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleAddSubchapter(cIndex)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded"
-                    >
-                      Add Subchapter
-                    </button>
-
-                    {/* Subchapters */}
-                    {chapter.subchapters.map((sub, sIndex) => {
-                      const subKey = `${cIndex}-${sIndex}`;
-                      return (
-                        <div
-                          key={sIndex}
-                          className="border p-3 rounded bg-gray-50 mt-2 ml-4"
-                        >
-                          <div
-                            className="flex justify-between items-center cursor-pointer"
-                            onClick={() => toggleSubchapter(cIndex, sIndex)}
-                          >
-                            <h5 className="font-semibold">
-                              {sub.title || `Subchapter ${sIndex + 1}`}
-                            </h5>
-                            <span>{activeSubchapter[subKey] ? "-" : "+"}</span>
-                          </div>
-
-                          {activeSubchapter[subKey] && (
-                            <div className="mt-2 space-y-2 max-h-[200px] overflow-y-auto">
-                              <input
-                                type="text"
-                                placeholder="Subchapter Title"
-                                value={sub.title}
-                                onChange={(e) =>
-                                  handleSubchapterChange(
-                                    cIndex,
-                                    sIndex,
-                                    "title",
-                                    e.target.value
-                                  )
-                                }
-                                className="border p-2 w-full rounded"
-                                required
-                              />
-                              <textarea
-                                placeholder="Subchapter Description"
-                                value={sub.description}
-                                onChange={(e) =>
-                                  handleSubchapterChange(
-                                    cIndex,
-                                    sIndex,
-                                    "description",
-                                    e.target.value
-                                  )
-                                }
-                                className="border p-2 w-full rounded"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleAddTopic(cIndex, sIndex)}
-                                className="bg-green-500 text-white px-3 py-1 rounded"
-                              >
-                                Add Topic
-                              </button>
-
-                              {/* Topics */}
-                              {sub.topics.map((topic, tIndex) => (
-                                <div
-                                  key={tIndex}
-                                  className="border p-3 rounded bg-white mt-2 ml-4"
-                                >
-                                  <input
-                                    type="text"
-                                    placeholder="Topic Title"
-                                    value={topic.title}
-                                    onChange={(e) =>
-                                      handleTopicChange(
-                                        cIndex,
-                                        sIndex,
-                                        tIndex,
-                                        "title",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="border p-2 w-full rounded"
-                                    required
-                                  />
-                                  <textarea
-                                    placeholder="Topic Content"
-                                    value={topic.content}
-                                    onChange={(e) =>
-                                      handleTopicChange(
-                                        cIndex,
-                                        sIndex,
-                                        tIndex,
-                                        "content",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="border p-2 w-full rounded"
-                                  />
-
-                                  <input
-                                    type="text"
-                                    placeholder="Video URL"
-                                    value={topic.videoUrl}
-                                    onChange={(e) =>
-                                      handleTopicChange(
-                                        cIndex,
-                                        sIndex,
-                                        tIndex,
-                                        "videoUrl",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="border p-2 w-full rounded"
-                                  />
-
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleAddResource(cIndex, sIndex, tIndex)
-                                    }
-                                    className="bg-purple-500 text-white px-3 py-1 rounded"
-                                  >
-                                    Add Resource
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleAddQuiz(cIndex, sIndex, tIndex)
-                                    }
-                                    className="bg-yellow-500 text-white px-3 py-1 rounded ml-2"
-                                  >
-                                    Add Quiz
-                                  </button>
-
-                                  {/* Resources */}
-                                  {topic.resources.map((res, rIndex) => (
-                                    <div key={rIndex} className="ml-4 mt-1">
-                                      <input
-                                        type="text"
-                                        placeholder="Resource Title"
-                                        value={res.title}
-                                        onChange={(e) =>
-                                          handleResourceChange(
-                                            cIndex,
-                                            sIndex,
-                                            tIndex,
-                                            rIndex,
-                                            "title",
-                                            e.target.value
-                                          )
-                                        }
-                                        className="border p-2 w-full rounded mt-1"
-                                      />
-                                      <input
-                                        type="text"
-                                        placeholder="Resource URL"
-                                        value={res.url}
-                                        onChange={(e) =>
-                                          handleResourceChange(
-                                            cIndex,
-                                            sIndex,
-                                            tIndex,
-                                            rIndex,
-                                            "url",
-                                            e.target.value
-                                          )
-                                        }
-                                        className="border p-2 w-full rounded mt-1"
-                                      />
-                                    </div>
-                                  ))}
-
-                                  {/* Quiz Questions */}
-                                  {topic.quiz.questions.map((q, qIndex) => (
-                                    <div
-                                      key={qIndex}
-                                      className="ml-4 mt-2 border p-2 rounded bg-gray-100"
-                                    >
-                                      <input
-                                        type="text"
-                                        placeholder="Question"
-                                        value={q.question}
-                                        onChange={(e) =>
-                                          handleQuizChange(
-                                            cIndex,
-                                            sIndex,
-                                            tIndex,
-                                            qIndex,
-                                            "question",
-                                            e.target.value
-                                          )
-                                        }
-                                        className="border p-2 w-full rounded mt-1"
-                                      />
-                                      {q.options.map((opt, oIndex) => (
-                                        <div
-                                          key={oIndex}
-                                          className="flex gap-2 mt-1 items-center"
-                                        >
-                                          <input
-                                            type="text"
-                                            placeholder="Option Text"
-                                            value={opt.text}
-                                            onChange={(e) =>
-                                              handleOptionChange(
-                                                cIndex,
-                                                sIndex,
-                                                tIndex,
-                                                qIndex,
-                                                oIndex,
-                                                "text",
-                                                e.target.value
-                                              )
-                                            }
-                                            className="border p-2 w-full rounded"
-                                          />
-                                          <label>
-                                            Correct
-                                            <input
-                                              type="checkbox"
-                                              checked={opt.isCorrect}
-                                              onChange={(e) =>
-                                                handleOptionChange(
-                                                  cIndex,
-                                                  sIndex,
-                                                  tIndex,
-                                                  qIndex,
-                                                  oIndex,
-                                                  "isCorrect",
-                                                  e.target.checked
-                                                )
-                                              }
-                                              className="ml-1"
-                                            />
-                                          </label>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ))}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                      {/* Topics */}
+                      {sub.topics.map((topic, ti) => (
+                        <div key={ti} className="ml-4 p-3 border rounded space-y-2 bg-gray-50">
+                          <h6 className="font-medium">Topic {ti + 1}</h6>
+                          <input placeholder="Title" value={topic.title} onChange={(e) => handleTopicChange(ci, si, ti, "title", e.target.value)} disabled={loading}
+                            className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" required />
+                          <textarea placeholder="Content" value={topic.content} onChange={(e) => handleTopicChange(ci, si, ti, "content", e.target.value)} disabled={loading} rows={2}
+                            className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                          <input placeholder="Video URL" value={topic.videoUrl} onChange={(e) => handleTopicChange(ci, si, ti, "videoUrl", e.target.value)} disabled={loading}
+                            className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                          <input type="number" placeholder="Duration (minutes)" value={topic.duration} onChange={(e) => handleTopicChange(ci, si, ti, "duration", e.target.value)} disabled={loading}
+                            className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={handleAddChapter}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Add Chapter
-            </button>
+                      ))}
+                      <button type="button" onClick={() => addTopic(ci, si)} disabled={loading} className="text-sm text-indigo-600 hover:underline">+ Add Topic</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => addSubchapter(ci)} disabled={loading} className="text-sm text-purple-600 hover:underline mt-1">+ Add Subchapter</button>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={addChapter} disabled={loading} className="mt-2 text-sm text-blue-600 hover:underline">+ Add Chapter</button>
           </div>
 
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-6 py-3 rounded w-full text-lg"
-          >
-            Create Course
-          </button>
+          {/* ===== Submit ===== */}
+          <div className="text-center">
+            <button type="submit" disabled={loading}
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">{loading ? "Creating..." : "Create Course"}</button>
+          </div>
         </form>
       </div>
     </div>
   );
-};
-
-export default AddCourse;
+}

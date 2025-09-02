@@ -17,7 +17,7 @@ const QuizPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const [timeSpent, setTimeSpent] = useState(0);
-  const [attempts, setAttempts] = useState([]); // <-- store attempts
+  const [attempts, setAttempts] = useState([]);
   const [maxReached, setMaxReached] = useState(false);
 
   // Timer
@@ -30,7 +30,6 @@ const QuizPage = () => {
   useEffect(() => {
     const fetchQuizAndAttempts = async () => {
       try {
-        // 1. Fetch quiz
         const res = await axios.get(`http://localhost:5000/api/quizzes/${quizId}`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
@@ -45,14 +44,12 @@ const QuizPage = () => {
           }))
         );
 
-        // 2. Fetch attempts
         const attRes = await axios.get(`http://localhost:5000/api/quizzes/${quizId}/attempts`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
         setAttempts(attRes.data.data || []);
 
-        // 3. Check max attempts
         if (res.data.data.maxAttempts && attRes.data.data.length >= res.data.data.maxAttempts) {
           setMaxReached(true);
         }
@@ -105,17 +102,19 @@ const QuizPage = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-10">Loading quiz...</div>;
+  if (loading) return <div className="text-center mt-10 text-gray-600">Loading quiz...</div>;
 
   if (maxReached) {
     return (
-      <div className="max-w-3xl mx-auto mt-10">
-        <Card className="p-4">
+      <div className="max-w-3xl mx-auto mt-10 px-4">
+        <Card className="p-6 shadow-md">
           <CardHeader>
-            <CardTitle>Maximum Attempts Reached</CardTitle>
+            <CardTitle className="text-xl text-red-600">Maximum Attempts Reached</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-lg">You have already taken this quiz the maximum allowed number of times.</p>
+            <p className="text-gray-700">
+              You have already taken this quiz the maximum allowed number of times.
+            </p>
             <Button className="mt-4" onClick={() => navigate("/quiz-list")}>
               Back to Quiz List
             </Button>
@@ -127,33 +126,41 @@ const QuizPage = () => {
 
   if (result) {
     return (
-      <div className="max-w-3xl mx-auto mt-10">
-        <Card className="p-4">
+      <div className="max-w-3xl mx-auto mt-10 px-4">
+        <Card className="p-6 shadow-md">
           <CardHeader>
-            <CardTitle>Quiz Result</CardTitle>
+            <CardTitle className="text-xl">Quiz Result</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-lg font-semibold">Score: {result.attempt.score}%</p>
-            <p>
+            <p className="text-gray-700">
               Points Earned: {result.attempt.pointsEarned}/{result.attempt.totalPoints}
             </p>
-            <p className={`font-bold ${result.attempt.passed ? "text-green-600" : "text-red-600"}`}>
+            <p
+              className={`mt-2 font-bold ${
+                result.attempt.passed ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {result.attempt.passed ? "You passed!" : "Try again!"}
             </p>
+
             {result.showCorrectAnswers && (
-              <div className="mt-4">
-                <h3 className="font-semibold mb-2">Correct Answers:</h3>
-                <ul className="list-disc pl-5">
+              <div className="mt-6">
+                <h3 className="font-semibold text-gray-800 mb-2">Correct Answers:</h3>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700">
                   {result.correctAnswers.map((ca) => (
                     <li key={ca.questionId}>
-                      Question ID: {ca.questionId}, Correct Answer: {ca.correctAnswer}, Explanation:{" "}
+                      <span className="font-medium">Question:</span> {ca.questionId} <br />
+                      <span className="font-medium">Correct Answer:</span> {ca.correctAnswer} <br />
+                      <span className="font-medium">Explanation:</span>{" "}
                       {ca.explanation || "N/A"}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-            <Button className="mt-4" onClick={() => navigate("/quiz-list")}>
+
+            <Button className="mt-6" onClick={() => navigate("/quiz-list")}>
               Back to Quiz List
             </Button>
           </CardContent>
@@ -163,21 +170,26 @@ const QuizPage = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">{quiz.title}</h2>
+    <div className="max-w-3xl mx-auto mt-10 px-4">
+      <h2 className="text-3xl font-bold mb-2 text-gray-800">{quiz.title}</h2>
       <p className="mb-6 text-gray-600">{quiz.description}</p>
 
-      <div className="mb-4 font-semibold">Time Spent: {timeSpent}s</div>
+      <div className="mb-6 text-sm text-gray-500 font-medium">
+        ⏱ Time Spent: <span className="text-blue-600">{timeSpent}s</span>
+      </div>
 
       {questions.map((q, i) => (
-        <Card key={q._id} className="mb-4">
-          <CardContent>
-            <p className="font-medium mb-2">
+        <Card key={q._id} className="mb-5 shadow-sm hover:shadow-md transition">
+          <CardContent className="p-5">
+            <p className="font-medium text-gray-800 mb-3">
               {i + 1}. {q.question}
             </p>
             {q.type === "multiple-choice" || q.type === "true-false" ? (
               q.options.map((opt, idx) => (
-                <label key={idx} className="flex items-center gap-2 mb-1 cursor-pointer">
+                <label
+                  key={idx}
+                  className="flex items-center gap-2 mb-2 cursor-pointer p-2 rounded hover:bg-gray-50"
+                >
                   <input
                     type="radio"
                     name={`question-${i}`}
@@ -185,7 +197,7 @@ const QuizPage = () => {
                     onChange={() => handleOptionChange(i, idx)}
                     className="accent-blue-600"
                   />
-                  <span>{opt.text}</span>
+                  <span className="text-gray-700">{opt.text}</span>
                 </label>
               ))
             ) : (
@@ -194,13 +206,18 @@ const QuizPage = () => {
                 value={answers[i]?.textAnswer || ""}
                 onChange={(e) => handleTextChange(i, e.target.value)}
                 className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Type your answer..."
               />
             )}
           </CardContent>
         </Card>
       ))}
 
-      <Button onClick={handleSubmit} disabled={submitting}>
+      <Button
+        onClick={handleSubmit}
+        disabled={submitting}
+        className="mt-4 w-full sm:w-auto"
+      >
         {submitting ? "Submitting..." : "Submit Quiz"}
       </Button>
     </div>

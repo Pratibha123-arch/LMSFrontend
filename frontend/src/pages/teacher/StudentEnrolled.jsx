@@ -13,8 +13,8 @@ const StudentEnrolled = () => {
       });
 
       const progressData = res.data.data.progress || [];
+      console.log("Fetched data+++:", progressData);
 
-      // Map to include student name and course title
       const formattedData = progressData.map((p) => ({
         studentName: p.student
           ? `${p.student.firstName} ${p.student.lastName}`
@@ -22,6 +22,8 @@ const StudentEnrolled = () => {
         courseTitle: p.course?.title || "Unknown Course",
         enrolledAt: p.enrolledAt,
       }));
+
+      console.log("formatted data====", formattedData);
 
       setEnrolledData(formattedData);
     } catch (err) {
@@ -34,24 +36,37 @@ const StudentEnrolled = () => {
   }, [token]);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Enrolled Students</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-100">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h2 className="text-2xl font-bold mb-6 text-gray-700">
+        Enrolled Students
+      </h2>
+      <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200 bg-white">
+        <table className="min-w-full border-collapse">
+          <thead className="bg-gray-100 text-gray-600">
             <tr>
-              <th className="border px-4 py-2 text-left">Student Name</th>
-              <th className="border px-4 py-2 text-left">Course Title</th>
-              <th className="border px-4 py-2 text-left">Enrolled Date</th>
+              <th className="border-b px-4 py-3 text-left font-medium">
+                Student Name
+              </th>
+              <th className="border-b px-4 py-3 text-left font-medium">
+                Course Title
+              </th>
+              <th className="border-b px-4 py-3 text-left font-medium">
+                Enrolled Date
+              </th>
             </tr>
           </thead>
           <tbody>
             {enrolledData.length > 0 ? (
               enrolledData.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{item.studentName}</td>
-                  <td className="border px-4 py-2">{item.courseTitle}</td>
-                  <td className="border px-4 py-2">
+                <tr
+                  key={index}
+                  className="hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <td className="px-4 py-3 text-gray-700">{item.studentName}</td>
+                  <td className="px-4 py-3 text-gray-700">
+                    {item.courseTitle}
+                  </td>
+                  <td className="px-4 py-3 text-gray-500">
                     {item.enrolledAt
                       ? new Date(item.enrolledAt).toLocaleDateString()
                       : "-"}
@@ -60,7 +75,10 @@ const StudentEnrolled = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={3} className="text-center py-4">
+                <td
+                  colSpan={3}
+                  className="text-center py-6 text-gray-400 italic"
+                >
                   No enrolled students found
                 </td>
               </tr>

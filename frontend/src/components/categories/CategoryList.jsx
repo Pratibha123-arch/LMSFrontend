@@ -37,7 +37,7 @@ const CategoryList = () => {
     if (total === 0) return null;
 
     return (
-      <div className="mt-2 flex gap-1 h-3 rounded overflow-hidden">
+      <div className="mt-3 flex gap-1 h-2 rounded overflow-hidden bg-gray-200">
         {["beginner", "intermediate", "advanced"].map((lvl) => {
           const count = levelDistribution[lvl] || 0;
           const widthPercent = (count / total) * 100;
@@ -51,7 +51,7 @@ const CategoryList = () => {
             <div
               key={lvl}
               style={{ width: `${widthPercent}%` }}
-              className={`${color}`}
+              className={`${color} transition-all`}
               title={`${lvl.charAt(0).toUpperCase() + lvl.slice(1)}: ${count}`}
             ></div>
           );
@@ -60,26 +60,54 @@ const CategoryList = () => {
     );
   };
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (loading)
+    return <div className="p-6 text-center text-lg">Loading...</div>;
+  if (error)
+    return <div className="p-6 text-center text-red-500">{error}</div>;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Categories</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+        Explore Categories
+      </h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {categories.map((cat) => (
           <div
             key={cat.name}
-            className="border p-4 rounded shadow hover:bg-gray-50 cursor-pointer"
+            className="bg-white border rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-5 cursor-pointer group"
             onClick={() => setSelectedCategory(cat.name)}
           >
-            <div className="text-4xl">{cat.icon}</div>
-            <h2 className="font-bold text-lg mt-2">{cat.displayName}</h2>
-            <p className="text-sm text-gray-600">{cat.description}</p>
-            <p className="mt-2 text-sm">
-              Courses: {cat.totalCourses} | Enrollments: {cat.totalEnrollments}
+            {/* Icon */}
+            <div className="text-5xl mb-3 text-blue-600 group-hover:scale-110 transition-transform">
+              {cat.icon}
+            </div>
+
+            {/* Title */}
+            <h2 className="font-semibold text-lg text-gray-800 group-hover:text-blue-600">
+              {cat.displayName}
+            </h2>
+
+            {/* Description */}
+            <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+              {cat.description}
             </p>
-            <p className="text-sm">Avg. Rating: {cat.averageRating}</p>
+
+            {/* Stats */}
+            <div className="mt-3 text-sm text-gray-700 space-y-1">
+              <p>
+                📚 Courses:{" "}
+                <span className="font-medium">{cat.totalCourses}</span>
+              </p>
+              <p>
+                👥 Enrollments:{" "}
+                <span className="font-medium">{cat.totalEnrollments}</span>
+              </p>
+              <p>
+                ⭐ Avg. Rating:{" "}
+                <span className="font-medium">{cat.averageRating}</span>
+              </p>
+            </div>
 
             {/* Visual Level Distribution */}
             {cat.levelDistribution && renderLevelBars(cat.levelDistribution)}
@@ -87,6 +115,7 @@ const CategoryList = () => {
         ))}
       </div>
 
+      {/* Category Details Modal/Drawer */}
       {selectedCategory && (
         <CategoryDetails
           categoryName={selectedCategory}
