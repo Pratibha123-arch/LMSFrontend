@@ -26,6 +26,7 @@ export const AppContextProvider = ({ children }) => {
   const [adminUsers, setAdminUsers] = useState([]);
   const [dashboardData, setDashboardData] = useState(null);
   const [loadingDashboard, setLoadingDashboard] = useState(false);
+  const [bookmarks, setBookmarks] = useState([]);
 
   // ===== Axios auth header =====
   useEffect(() => {
@@ -56,32 +57,38 @@ export const AppContextProvider = ({ children }) => {
   };
 
   // ===== Enroll in Course =====
-  const enrollInCourse = async (courseId) => {
-    if (!token) {
-      alert("Please login first!");
-      return;
-    }
+// ===== Enroll in Course =====
+const enrollInCourse = async (courseId) => {
+  if (!token) {
+    alert("Please login first!");
+    return;
+  }
 
-    try {
-      const res = await axios.post(
-        `http://localhost:5000/api/courses/${courseId}/enroll`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  try {
+    const res = await axios.post(
+      `http://localhost:5000/api/courses/${courseId}/enroll`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      const enrolledCourse = res.data.data?.course || res.data.data || {};
+    // Progress object (from backend)
+    const progress = res.data.data;
 
-      setEnrolledCourses((prev = []) => {
-        if (prev.some((c) => c._id === courseId)) return prev;
-        return [...prev, enrolledCourse];
-      });
+    // Find full course from allCourses
+    const enrolledCourse = allCourses.find((c) => c._id === courseId);
 
-      alert("Enrolled successfully!");
-    } catch (err) {
-      console.error("Enroll failed:", err.response?.data || err.message);
-      alert("Enrollment failed!");
-    }
-  };
+    setEnrolledCourses((prev = []) => {
+      if (prev.some((c) => c._id === courseId)) return prev;
+      return enrolledCourse ? [...prev, enrolledCourse] : prev;
+    });
+
+    alert("Enrolled successfully!");
+  } catch (err) {
+    console.error("Enroll failed:", err.response?.data || err.message);
+    alert("Enrollment failed!");
+  }
+};
+
 
   // ===== Progress & Topic Functions =====
   const markTopicCompleted = async (courseId, topicId, timeSpent = 0) => {
@@ -127,17 +134,24 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const toggleBookmark = async (courseId, topicId) => {
-    try {
-      const res = await axios.post(
-        `/api/progress/course/${courseId}/topic/${topicId}/bookmark`,
-        {},
-        { withCredentials: true }
-      );
-      if (res.data.success) fetchUserEnrolledCourses();
-    } catch (err) {
-      console.error("Error toggling bookmark:", err);
-    }
-  };
+  try {
+    const res = await axios.post(
+      `/api/progress/course/${courseId}/topic/${topicId}/bookmark`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const { isBookmarked } = res.data.data;
+    setBookmarks((prev) =>
+      isBookmarked
+        ? [...prev, topicId] // add
+        : prev.filter((id) => id !== topicId) // remove
+    );
+    return isBookmarked;
+  } catch (err) {
+    console.error("Bookmark toggle failed:", err);
+  }
+};
 
   // ===== Subscription =====
   const subscribeToCourse = async (courseId) => {

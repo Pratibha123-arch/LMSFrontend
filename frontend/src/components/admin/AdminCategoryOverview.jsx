@@ -28,7 +28,7 @@ const AdminCategoryOverview = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold">📊 Category Stats Overview</h2>
+      <h2 className="text-xl font-bold">Category Stats Overview</h2>
       <p>Total Categories: {overview.totalCategories}</p>
       <p>Categories With Courses: {overview.categoriesWithCourses}</p>
       <p>

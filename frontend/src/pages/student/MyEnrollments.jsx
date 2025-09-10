@@ -85,13 +85,7 @@ const MyEnrollments = () => {
                         />
                         <div>
                           <p className="font-medium">{course.title}</p>
-                          <Line
-                            strokeWidth={2}
-                            percent={progressPercent}
-                            strokeColor="#4F46E5"
-                            trailColor="#E5E7EB"
-                            className="rounded-full mt-1"
-                          />
+                         
                         </div>
                       </td>
                       <td className="px-4 py-3 max-sm:hidden">

@@ -101,7 +101,7 @@ const CategoryDetails = ({ categoryName, onClose }) => {
               setSearchTerm(e.target.value);
               setPage(1);
             }}
-            placeholder="🔍 Search by title"
+            placeholder="Search by title"
             className="w-full border px-3 py-2 rounded-md focus:ring focus:ring-blue-200"
           />
         </div>
@@ -147,7 +147,7 @@ const CategoryDetails = ({ categoryName, onClose }) => {
               {course.title}
             </h3>
             <p className="text-sm text-gray-600 mb-1">
-              👨‍🏫 {course.teacher?.firstName} {course.teacher?.lastName}
+              {course.teacher?.firstName} {course.teacher?.lastName}
             </p>
             <p className="text-sm mb-1">💲 ${course.price}</p>
             <p className="text-sm mb-1">👥 {course.enrollmentCount} enrolled</p>

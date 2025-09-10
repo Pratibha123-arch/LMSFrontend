@@ -96,15 +96,15 @@ const CategoryList = () => {
             {/* Stats */}
             <div className="mt-3 text-sm text-gray-700 space-y-1">
               <p>
-                📚 Courses:{" "}
+                Courses:{" "}
                 <span className="font-medium">{cat.totalCourses}</span>
               </p>
               <p>
-                👥 Enrollments:{" "}
+                Enrollments:{" "}
                 <span className="font-medium">{cat.totalEnrollments}</span>
               </p>
               <p>
-                ⭐ Avg. Rating:{" "}
+                Avg. Rating:{" "}
                 <span className="font-medium">{cat.averageRating}</span>
               </p>
             </div>

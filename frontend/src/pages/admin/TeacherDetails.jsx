@@ -29,7 +29,7 @@ const TeacherDetails = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const { teacher, courses } = res.data.data; // destructure backend response
+        const { teacher, courses } = res.data.data; 
         setTeacher(teacher);
         setCourses(Array.isArray(courses) ? courses : []);
       } catch (err) {

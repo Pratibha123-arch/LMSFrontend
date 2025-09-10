@@ -175,7 +175,7 @@ const QuizPage = () => {
       <p className="mb-6 text-gray-600">{quiz.description}</p>
 
       <div className="mb-6 text-sm text-gray-500 font-medium">
-        ⏱ Time Spent: <span className="text-blue-600">{timeSpent}s</span>
+        Time Spent: <span className="text-blue-600">{timeSpent}s</span>
       </div>
 
       {questions.map((q, i) => (

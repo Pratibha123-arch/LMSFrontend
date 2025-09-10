@@ -68,7 +68,7 @@ const MyCourses = () => {
     }
   };
 
-  // ✅ Delete course
+  // Delete course
   const handleDelete = async (courseId) => {
     if (!window.confirm("Are you sure you want to delete this course?")) return;
     setLoadingDelete(courseId);

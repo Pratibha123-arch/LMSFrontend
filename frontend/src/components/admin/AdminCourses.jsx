@@ -35,7 +35,7 @@ const AdminCourses = () => {
                 <p className="text-xs text-gray-500 mt-2">
                   Teacher: {course.teacher?.fullName || "Unknown"}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                   Status:{" "}
                   <span
                     className={`px-2 py-1 rounded text-white ${
@@ -47,23 +47,8 @@ const AdminCourses = () => {
                 </p>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={() =>
-                    (window.location.href = `/admin/courses/edit/${course._id}`)
-                  }
-                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteCourse(course._id)}
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
+            
+              
             </div>
           ))}
         </div>

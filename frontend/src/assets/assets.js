@@ -29,7 +29,8 @@ import patients_icon from './patients_icon.jpg';
 import appointment_icon from './appointment_icon.jpg';
 import earning_icon from './earning_icon.jpg';
 import addQuiz_icon from './addQuiz_icon.jpg';
-import quiz_icon from './quiz_icon.jpg'; // make sure this filename matches exactly
+import quiz_icon from './quiz_icon.jpg'; 
+import messages_icon from './messages_icon.jpg'
 
 export const assets = {
   logo,
@@ -63,5 +64,6 @@ export const assets = {
   appointment_icon,
   earning_icon,
   addQuiz_icon,
-  quiz_icon
+  quiz_icon,
+  messages_icon
 };

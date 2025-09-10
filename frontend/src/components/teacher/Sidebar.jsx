@@ -12,6 +12,7 @@ const Sidebar = () => {
     { name: 'My Courses', path: '/teacher/my-courses', icon: assets.my_course_icon },
     { name: 'Student Enrolled', path: '/teacher/student-enrolled', icon: assets.person_tick_icon },
     { name: 'Add Quiz', path: '/teacher/add-quiz', icon: assets.addQuiz_icon },
+    { name: 'Messages', path: '/teacher/messages', icon: assets.messages_icon },
   ];
 
   return isTeacher && (

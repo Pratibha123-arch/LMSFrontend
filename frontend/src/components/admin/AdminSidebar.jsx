@@ -6,7 +6,8 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
     { id: "stats", label: "Dashboard", icon: <BarChart3 size={20} /> },
     { id: "courses", label: "Manage Courses", icon: <BookOpen size={20} /> },
     { id: "users", label: "Manage Users", icon: <Users size={20} /> },
-    { id: "categories", label: "Manage Categories", icon: <Users size={20} /> }
+    { id: "categories", label: "Manage Categories", icon: <Users size={20} /> },
+    { id: "messages", label: "Message Template", icon: <Users size={20} /> }
   ];
 
   return (
