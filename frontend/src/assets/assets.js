@@ -7,8 +7,6 @@ import paypal_logo from "./paypal_logo.jpg";
 import accenture_logo from "./accenture_logo.jpg";
 import adobe_logo from "./adobe_logo.jpg";
 import star from "./star.jpg";
-import node_course from "./node_course.jpg";
-
 import star_blank from "./star_blank.jpg";
 import arrow_icon from "./arrow_icon.jpg";
 import cross_icon from "./cross_icon.jpg";
@@ -42,7 +40,6 @@ export const assets = {
   accenture_logo,
   adobe_logo,
   star,
-  node_course,
   star_blank,
   arrow_icon,
   cross_icon,
