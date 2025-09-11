@@ -225,7 +225,7 @@ const enrollInCourse = async (courseId) => {
   // ===== Auth =====
   const requestOtp = async (payload) => {
     try {
-      const res = await axios.post("http://13.233.183.81/api/auth/request-otp", payload);
+      const res = await axios.post("http://13.233.183.81:5000/api/auth/request-otp", payload);
       return res.data;
     } catch (err) {
       throw err.response?.data || err;
@@ -234,7 +234,7 @@ const enrollInCourse = async (courseId) => {
 
   const verifyOtp = async (email, otp) => {
     try {
-      const res = await axios.post("http://13.233.183.81/api/auth/verify-otp", { email, otp });
+      const res = await axios.post("http://13.233.183.81:5000/api/auth/verify-otp", { email, otp });
       const jwt = res.data.data.token;
       const loggedUser = res.data.data.user;
 
