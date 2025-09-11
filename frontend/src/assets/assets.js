@@ -7,7 +7,7 @@ import paypal_logo from './paypal_logo.jpg';
 import accenture_logo from './accenture_logo.jpg'; 
 import adobe_logo from './adobe_logo.jpg';
 import star from './star.jpg';   
-import reactCourse from './react-Course.jpg';
+import reactCourse from './react_Course.jpg';
 import nodeCourse from './node_Course.jpg';
 import star_blank from './star_blank.jpg';
 import arrow_icon from './arrow_icon.jpg';
