@@ -62,7 +62,7 @@ const TeacherAddQuiz = () => {
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const res = await axios.post("http://localhost:5000/api/quizzes", quiz, {
+    const res = await axios.post("http://13.233.183.81/api/quizzes", quiz, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

@@ -8,7 +8,7 @@ const StudentEnrolled = () => {
 
   const fetchEnrolledStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/progress", {
+      const res = await axios.get("http://13.233.183.81/api/progress", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

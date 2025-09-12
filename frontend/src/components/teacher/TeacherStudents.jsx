@@ -28,7 +28,7 @@ const StudentProgress = () => {
       const query = new URLSearchParams(queryParams).toString();
 
       const res = await axios.get(
-        `http://localhost:5000/api/progress?${query}`,
+        `http://13.233.183.81/api/progress?${query}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

@@ -46,7 +46,7 @@ const MyCourses = () => {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/courses/${editingCourse._id}`,
+        `http://13.233.183.81/api/courses/${editingCourse._id}`,
         {
           title: editingCourse.title,
           description: editingCourse.description,
@@ -74,7 +74,7 @@ const MyCourses = () => {
     setLoadingDelete(courseId);
 
     try {
-      await axios.delete(`http://localhost:5000/api/courses/${courseId}`, {
+      await axios.delete(`http://13.233.183.81/api/courses/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -90,7 +90,7 @@ const MyCourses = () => {
     try {
       setLoadingPublish(id);
       await axios.patch(
-        `http://localhost:5000/api/courses/${id}/publish`,
+        `http://13.233.183.81/api/courses/${id}/publish`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -39,7 +39,7 @@ const TeacherMyCourses = () => {
   const handleUpdate = async (courseId) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/courses/${courseId}`,
+        `http://13.233.183.81/api/courses/${courseId}`,
         editForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -57,7 +57,7 @@ const TeacherMyCourses = () => {
   if (!window.confirm("Are you sure you want to delete this course?")) return;
 
   try {
-    await axios.delete(`http://localhost:5000/api/courses/${courseId}`, {
+    await axios.delete(`http://13.233.183.81/api/courses/${courseId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     // Remove the deleted course from state
@@ -70,7 +70,7 @@ const TeacherMyCourses = () => {
 const handleTogglePublish = async (courseId) => {
   try {
     const res = await axios.patch(
-      `http://localhost:5000/api/courses/${courseId}/publish`,
+      `http://13.233.183.81/api/courses/${courseId}/publish`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -92,7 +92,7 @@ const handleTogglePublish = async (courseId) => {
 
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/courses/teacher/${user.id}?page=${page}&limit=${limit}`,
+        `http://13.233.183.81/api/courses/teacher/${user.id}?page=${page}&limit=${limit}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

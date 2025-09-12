@@ -50,7 +50,7 @@ const AdminMessageTemplate = () => {
       }
 
       const res = await axios.get(
-        "http://localhost:5000/api/message-templates",
+        "http://13.233.183.81/api/message-templates",
         {
           headers: { Authorization: `Bearer ${token}` },
           params,
@@ -75,7 +75,7 @@ const AdminMessageTemplate = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:5000/api/message-templates/${selectedTemplateId}`,
+        `http://13.233.183.81/api/message-templates/${selectedTemplateId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -98,7 +98,7 @@ const AdminMessageTemplate = () => {
     try {
       setLoadingPreview(true);
       const res = await axios.post(
-        `http://localhost:5000/api/message-templates/${previewTemplateId}/preview`,
+        `http://13.233.183.81/api/message-templates/${previewTemplateId}/preview`,
         previewVariables,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -120,7 +120,7 @@ const AdminMessageTemplate = () => {
    const fetchTypes = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/message-templates/types", {
+      const res = await axios.get("http://13.233.183.81/api/message-templates/types", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTypes(res.data.data);

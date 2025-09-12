@@ -111,7 +111,7 @@ const TeacherAddCourse = () => {
         learningOutcomes: form.learningOutcomes.filter((o) => o.trim() !== ""),
       };
 
-      await axios.post("http://localhost:5000/api/courses", payload, {
+      await axios.post("http://13.233.183.81/api/courses", payload, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
 

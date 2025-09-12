@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CategoryDetails from "./CategoryDetails";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "http://13.233.183.81/api";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);

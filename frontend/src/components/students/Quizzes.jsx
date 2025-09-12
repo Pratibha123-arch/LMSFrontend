@@ -12,7 +12,7 @@ const QuizzesList = ({ token }) => {
 
   const fetchQuizzes = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/quizzes", {
+      const res = await axios.get("http://13.233.183.81/api/quizzes", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setQuizzes(res.data.data.quizzes);

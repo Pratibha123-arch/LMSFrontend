@@ -30,7 +30,7 @@ const QuizPage = () => {
   useEffect(() => {
     const fetchQuizAndAttempts = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/quizzes/${quizId}`, {
+        const res = await axios.get(`http://13.233.183.81/api/quizzes/${quizId}`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -44,7 +44,7 @@ const QuizPage = () => {
           }))
         );
 
-        const attRes = await axios.get(`http://localhost:5000/api/quizzes/${quizId}/attempts`, {
+        const attRes = await axios.get(`http://13.233.183.81/api/quizzes/${quizId}/attempts`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -86,7 +86,7 @@ const QuizPage = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/quizzes/${quizId}/submit`,
+        `http://13.233.183.81/api/quizzes/${quizId}/submit`,
         { answers, timeSpent },
         {
           headers: { Authorization: `Bearer ${token}` },

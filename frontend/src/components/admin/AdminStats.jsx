@@ -36,7 +36,7 @@ const AdminStats = () => {
       if (courseId) params.courseId = courseId;
 
       const res = await axios.get(
-        "http://localhost:5000/api/scheduling/admin/stats",
+        "http://13.233.183.81/api/scheduling/admin/stats",
         {
           headers: { Authorization: `Bearer ${token}` },
           params,
@@ -58,7 +58,7 @@ const AdminStats = () => {
     setStatusMessage(null);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/scheduling/admin/process-pending",
+        "http://13.233.183.81/api/scheduling/admin/process-pending",
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -78,7 +78,7 @@ const AdminStats = () => {
     setStatusMessage(null);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/scheduling/admin/retry-failed",
+        "http:/13.233.183.81/api/scheduling/admin/retry-failed",
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -97,7 +97,7 @@ const AdminStats = () => {
     setResponseMsg("");
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/scheduling/admin/test-email",
+        "http://13.233.183.81/api/scheduling/admin/test-email",
         { email, message },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -111,7 +111,7 @@ const AdminStats = () => {
   const handleDefaults = async () => {
     setLoadingStats(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/scheduling/admin/seed/defaults",
+      const res = await axios.post("http://13.233.183.81/api/scheduling/admin/seed/defaults",
         {},
         {headers:{Authorization:`Bearer ${token}`}}
       );

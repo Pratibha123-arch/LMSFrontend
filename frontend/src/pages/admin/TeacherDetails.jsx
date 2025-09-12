@@ -25,7 +25,7 @@ const TeacherDetails = () => {
       setError(null);
       try {
         const res = await axios.get(
-          `http://localhost:500/api/admin/teachers/${teacherId}`,
+          `http://13.233.183.81/api/admin/teachers/${teacherId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 

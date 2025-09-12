@@ -82,7 +82,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/admin/users", newUser, {
+      await axios.post("http://13.233.183.81/api/admin/users", newUser, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("User created successfully!");
@@ -108,7 +108,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
 
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/users/${editingUser._id}`,
+        `http:/13.233.183.81/api/admin/users/${editingUser._id}`,
         editingUser,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -124,7 +124,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
   const handleEditClick = async (userId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/admin/users/${userId}`,
+        `http://13.233.183.81/api/admin/users/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setEditingUser(res.data.data.user);
@@ -137,7 +137,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+      await axios.delete(`http://13.233.183.81/api/admin/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("User deleted successfully!");
@@ -151,7 +151,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
   const handleToggleStatus = async (userId) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/admin/users/${userId}/toggle-status`,
+        `http://13.233.183.81/api/admin/users/${userId}/toggle-status`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -177,7 +177,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
     if (!newPassword) return alert("Enter a new password");
     try {
       await axios.patch(
-        `http://localhost:5000/api/admin/users/${resetUserId}/reset-password`,
+        `http://13.233.183.81/api/admin/users/${resetUserId}/reset-password`,
         { newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -199,7 +199,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
       if (statusFilter) params.isActive = statusFilter === "true";
       if (searchTerm) params.search = searchTerm;
 
-      const res = await axios.get("http://localhost:5000/api/admin/users", {
+      const res = await axios.get("http://13.233.183.81/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       });
@@ -220,7 +220,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
     setTeachersLoading(true);
     setTeachersError(null);
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/teachers", {
+      const res = await axios.get("http://13.233.183.81/api/admin/teachers", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -253,7 +253,7 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
 
   try {
     await axios.patch(
-      `http://localhost:5000/api/admin/users/${userId}/promote-teacher`,
+      `http://13.233.183.81/api/admin/users/${userId}/promote-teacher`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

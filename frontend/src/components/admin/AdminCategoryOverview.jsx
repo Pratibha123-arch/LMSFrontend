@@ -11,7 +11,7 @@ const AdminCategoryOverview = () => {
     const fetchOverview = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/categories/stats/overview",
+          "http://http://13.233.183.81//api/categories/stats/overview",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

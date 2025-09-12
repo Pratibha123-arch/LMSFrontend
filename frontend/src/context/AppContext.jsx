@@ -94,7 +94,7 @@ export const AppContextProvider = ({ children }) => {
   const markTopicCompleted = async (courseId, topicId, timeSpent = 0) => {
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/progress/course/${courseId}/topic/${topicId}/complete`,
+        `http://13.233.183.81/api/progress/course/${courseId}/topic/${topicId}/complete`,
         { timeSpent },
         { withCredentials: true }
       );
@@ -159,7 +159,7 @@ export const AppContextProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:5000/api/subscriptions/course/${courseId}`,
+        `http://13.233.183.81/api/subscriptions/course/${courseId}`,
         {
           subscriptionType: "free",
           paymentMethod: "free",
@@ -264,7 +264,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const resendOtp = async (email, deliveryMethod = "email") => {
-    const res = await axios.post("http://localhost:5000/api/auth/resend-otp", {
+    const res = await axios.post("http://13.233.183.81/api/auth/resend-otp", {
       email,
       deliveryMethod,
     });
@@ -274,7 +274,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchProfile = async () => {
     if (!token) return;
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/profile");
+      const res = await axios.get("http://13.233.183.81/api/auth/profile");
       setUser(res.data.data);
     } catch {
       console.error("Profile fetch failed:");
@@ -285,7 +285,7 @@ export const AppContextProvider = ({ children }) => {
     if (!token) throw new Error("User not logged in");
     try {
       const { data } = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        "http://13.233.183.81/api/auth/profile",
         formData,
         {
           headers: {
@@ -309,7 +309,7 @@ export const AppContextProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        "http://13.233.183.81/api/auth/logout",
         {},
         { withCredentials: true }
       );
@@ -327,7 +327,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchUserEnrolledCourses = async () => {
     if (!token) return;
     try {
-      const res = await axios.get("http://localhost:5000/api/progress");
+      const res = await axios.get("http://13.233.183.81/api/progress");
       const progressData = res.data.data.progress || [];
 
       const mergedCourses = progressData.map((p) => {
@@ -376,7 +376,7 @@ export const AppContextProvider = ({ children }) => {
     setLoadingDashboard(true);
     try {
       const coursesRes = await axios.get(
-        `http://localhost:5000/api/courses/teacher/${user._id}`,
+        `http://13.233.183.81/api/courses/teacher/${user._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -390,7 +390,7 @@ export const AppContextProvider = ({ children }) => {
       );
 
       const progressRes = await axios.get(
-        "http://localhost:5000/api/progress",
+        "http://13.233.183.81/api/progress",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -431,7 +431,7 @@ export const AppContextProvider = ({ children }) => {
   // ===== Quizzes =====
   const fetchQuizzes = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/quizzes");
+      const res = await axios.get("http://13.233.183.81/api/quizzes");
       let quizzesData = [];
       if (Array.isArray(res.data)) quizzesData = res.data;
       else if (Array.isArray(res.data.quizzes)) quizzesData = res.data.quizzes;
@@ -448,7 +448,7 @@ export const AppContextProvider = ({ children }) => {
 
   const addQuiz = async (quiz) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/quizzes", quiz, {
+      const res = await axios.post("http://13.233.183.81/api/quizzes", quiz, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const quizData = res.data?.data?.quiz || res.data?.data || res.data;
@@ -463,7 +463,7 @@ export const AppContextProvider = ({ children }) => {
   const startQuiz = async (quizId) => {
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/quizzes/${quizId}/start`,
+        `http://13.233.183.81/api/quizzes/${quizId}/start`,
         {}, // empty body
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -477,7 +477,7 @@ export const AppContextProvider = ({ children }) => {
   const submitQuiz = async (quizId, answers, timeSpent = 0) => {
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/quizzes/${quizId}/submit`,
+        `http://13.233.183.81/api/quizzes/${quizId}/submit`,
         { answers, timeSpent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -493,7 +493,7 @@ export const AppContextProvider = ({ children }) => {
 
   // ===== Admin APIs =====
   const fetchAdminDashboard = async () => {
-    const res = await axios.get("http://localhost:5000/api/admin/dashboard", {
+    const res = await axios.get("http://13.233.183.81/api/admin/dashboard", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data.data;
@@ -502,7 +502,7 @@ export const AppContextProvider = ({ children }) => {
   const fetchAdminUsers = async (params = {}) => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/users", {
+      const res = await axios.get("http://13.233.183.81/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       });
@@ -517,7 +517,7 @@ export const AppContextProvider = ({ children }) => {
 
   const toggleUserStatus = async (id) => {
     const res = await axios.patch(
-      `http://localhost:5000/api/admin/users/${id}/toggle-status`,
+      `http://13.233.183.81/api/admin/users/${id}/toggle-status`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

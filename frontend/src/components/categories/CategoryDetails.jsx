@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "http://13.233.183.81/api";
 const LEVELS = ["beginner", "intermediate", "advanced"];
 const SORT_FIELDS = [
   { label: "Newest", value: "createdAt" },

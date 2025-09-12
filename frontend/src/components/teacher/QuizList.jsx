@@ -33,7 +33,7 @@ const QuizList = () => {
 
   const fetchQuizById = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/quizzes/${id}`, {
+      const res = await axios.get(`http://13.233.183.81/api/quizzes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setQuizDetails(res.data.data);
@@ -48,7 +48,7 @@ const QuizList = () => {
       setLoading(true);
       const query = new URLSearchParams(filters).toString();
 
-      const res = await axios.get(`http://localhost:5000/api/quizzes`, {
+      const res = await axios.get(`http://13.233.183.81/api/quizzes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -64,7 +64,7 @@ const QuizList = () => {
     try {
       setStatsLoading(true);
       const res = await axios.get(
-        `http://localhost:5000/api/quizzes/${id}/stats`,
+        `http://13.233.183.81/api/quizzes/${id}/stats`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -94,7 +94,7 @@ const QuizList = () => {
   // Save update
   const handleUpdateQuiz = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/quizzes/${id}`, editForm, {
+      await axios.put(`http://13.233.183.81/api/quizzes/${id}`, editForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Quiz updated successfully");
@@ -110,7 +110,7 @@ const QuizList = () => {
     if (!window.confirm("Are you sure you want to delete this quiz?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/quizzes/${id}`, {
+      await axios.delete(`http://13.233.183.81/api/quizzes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -126,7 +126,7 @@ const QuizList = () => {
   const handleTogglePublish = async (id) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/quizzes/${id}/publish`,
+        `http://13.233.183.81/api/quizzes/${id}/publish`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

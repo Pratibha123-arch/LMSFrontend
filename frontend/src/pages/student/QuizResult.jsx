@@ -12,7 +12,7 @@ const QuizResult = () => {
     const fetchAttempt = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/quizzes/${id}/attempts`,
+          `http://13.233.183.81/api/quizzes/${id}/attempts`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setAttempt(res.data.data[res.data.data.length - 1]); // Last attempt
