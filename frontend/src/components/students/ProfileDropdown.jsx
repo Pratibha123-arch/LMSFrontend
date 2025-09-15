@@ -79,7 +79,7 @@ const ProfileDropdown = () => {
       });
 
       // Send FormData directly
-      await updateProfile(data); 
+      await updateProfile(data); // updateProfile should accept FormData
       setEditMode(false);
       alert("Profile updated successfully!");
     } catch (err) {
@@ -98,7 +98,7 @@ const ProfileDropdown = () => {
         <img
           src={
             user.profileImage
-              ? `http://13.233.183.81${user.profileImage}`
+              ? `http://localhost:5000${user.profileImage}`
               : assets.user_icon || "/default-avatar.png"
           }
           alt="profile"
@@ -142,7 +142,7 @@ const ProfileDropdown = () => {
             </>
           ) : (
             <div className="space-y-2">
-              {/* File input name changed to profileImage */}
+              {/* ✅ File input name changed to profileImage */}
               <input
                 type="file"
                 name="profileImage"
