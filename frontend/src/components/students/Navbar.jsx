@@ -3,63 +3,55 @@ import { AppContext } from "../../context/AppContext";
 import ProfileDropdown from "./ProfileDropdown";
 import { assets } from "../../assets/assets";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  console.log("hhh",navigate)
   const { user } = useContext(AppContext); 
-  const [showOtp, setShowOtp] = useState(false);
-  console.log("ssssssss",setShowOtp)
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const isCourseListPage = location.pathname.includes("/course-list");
 
-  // Safely check role
   const role = user?.role || "student";
 
   return (
-    <div className="relative">
-      <div
-        className={`flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36
-          border-b border-gray-500 py-4 
-          ${isCourseListPage ? "bg-white" : "bg-cyan-100/70"}`}
-      >
+    <nav
+      className={`relative border-b border-gray-500 
+      ${isCourseListPage ? "bg-white" : "bg-cyan-100/70"}`}
+    >
+      <div className="flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-4">
         {/* Logo */}
         <img
           src={assets.logo}
           alt="Logo"
-          className="w-23 lg:w-32 cursor-pointer"
+          className="w-24 lg:w-32 cursor-pointer"
           onClick={() => navigate("/")}
         />
 
         {/* Desktop Navbar */}
-        <div className="hidden md:flex items-center gap-5 text-gray-500">
-          <div className="flex items-center gap-5">
-            {user && (
-              <>
-                {role === "student" && (
-                  <>
-                    <Link to="/my-enrollments">My Enrollments</Link>
-                    <Link to="/quiz-list">Quizzes</Link>
-                    <Link to="/categories" >Categories</Link>
-                  </>
-                )}
+        <div className="hidden md:flex items-center gap-6 text-gray-600">
+          {user && (
+            <>
+              {role === "student" && (
+                <>
+                  <Link to="/my-enrollments">My Enrollments</Link>
+                  <Link to="/quiz-list">Quizzes</Link>
+                  <Link to="/categories">Categories</Link>
+                </>
+              )}
+              {role === "teacher" && (
+                <button onClick={() => navigate("/teacher")}>
+                  Teacher Dashboard
+                </button>
+              )}
+              {role === "admin" && (
+                <button onClick={() => navigate("/admin")}>
+                  Admin Dashboard
+                </button>
+              )}
+            </>
+          )}
 
-                {role === "teacher" && (
-                  <button onClick={() => navigate("/teacher")}>
-                    Teacher Dashboard
-                  </button>
-                )}
-
-                {role === "admin" && (
-                  <button onClick={() => navigate("/admin")}>
-                    Admin Dashboard
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Auth Buttons / Profile */}
           {user ? (
             <ProfileDropdown />
           ) : (
@@ -79,23 +71,84 @@ const Navbar = () => {
             </>
           )}
         </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden p-2"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
 
-      {/* OTP Modal */}
-      {showOtp && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500"
-              onClick={() => setShowOtp(false)}
-            >
-              ✕
-            </button>
-            <RequestOtp />
-          </div>
+      {/* Mobile Dropdown */}
+      {mobileOpen && (
+        <div className="md:hidden bg-white border-t border-gray-300 px-4 py-3 space-y-3">
+          {user && (
+            <>
+              {role === "student" && (
+                <div className="flex flex-col space-y-2">
+                  <Link to="/my-enrollments" onClick={() => setMobileOpen(false)}>
+                    My Enrollments
+                  </Link>
+                  <Link to="/quiz-list" onClick={() => setMobileOpen(false)}>
+                    Quizzes
+                  </Link>
+                  <Link to="/categories" onClick={() => setMobileOpen(false)}>
+                    Categories
+                  </Link>
+                </div>
+              )}
+              {role === "teacher" && (
+                <button
+                  onClick={() => {
+                    navigate("/teacher");
+                    setMobileOpen(false);
+                  }}
+                >
+                  Teacher Dashboard
+                </button>
+              )}
+              {role === "admin" && (
+                <button
+                  onClick={() => {
+                    navigate("/admin");
+                    setMobileOpen(false);
+                  }}
+                >
+                  Admin Dashboard
+                </button>
+              )}
+            </>
+          )}
+
+          {user ? (
+            <ProfileDropdown />
+          ) : (
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  navigate("/request-otp");
+                  setMobileOpen(false);
+                }}
+                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Request OTP
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/verify-otp");
+                  setMobileOpen(false);
+                }}
+                className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition"
+              >
+                Verify OTP
+              </button>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </nav>
   );
 };
 
