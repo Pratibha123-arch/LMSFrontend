@@ -271,39 +271,49 @@ export const AppContextProvider = ({ children }) => {
     return res.data.data;
   };
 
-  const fetchProfile = async () => {
-    if (!token) return;
-    try {
-      const res = await axios.get("http://13.233.183.81/api/auth/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUser(res.data.data);
-    } catch (err) {
-      console.error("Profile fetch failed:", err.response?.data || err.message);
-    }
-  };
+const fetchProfile = async () => {
+  const token = localStorage.getItem("token"); // include token
+  if (!token) return;
 
- const updateProfile = async (formData) => {
-    if (!token) return;
-    try {
-      const res = await axios.put(
-        "http://13.233.183.81/api/auth/profile",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setUser(res.data.data); 
-    } catch (err) {
-      console.error("Profile update failed:", err.response?.data || err.message);
-      throw err;
-    }
-  };
+  try {
+    const res = await axios.get("http://13.233.183.81/api/auth/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ send token
+      },
+    });
+    setUser(res.data.data);
+  } catch (error) {
+    console.error("Profile fetch failed:", error.response?.data || error.message);
+  }
+};
 
+const updateProfile = async (formData) => {
+  const token = localStorage.getItem("token"); // make sure token is loaded
+  if (!token) throw new Error("User not logged in");
 
+  try {
+    const { data } = await axios.put(
+      "http://13.233.183.81/api/auth/profile",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // send token
+          "Content-Type": "multipart/form-data", // only needed for file uploads
+        },
+      }
+    );
+
+    setUser({ ...data.data });
+    localStorage.setItem("user", JSON.stringify(data.data));
+    return data;
+  } catch (error) {
+    console.error(
+      "Profile update error:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
   const logout = async () => {
     try {
       await axios.post(
