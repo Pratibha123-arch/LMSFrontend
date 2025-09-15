@@ -96,14 +96,15 @@ const ProfileDropdown = () => {
         onClick={() => setOpen((prev) => !prev)}
       >
         <img
-          src={
-            user.profileImage
-              ? `13.233.183.81${user.profileImage}`
-              : assets.user_icon || "/default-avatar.png"
-          }
-          alt="profile"
-          className="w-12 h-12 rounded-full object-cover border-2 border-gray-300"
-        />
+  src={
+    user?.profileImage
+      ? `http://13.233.183.81${user.profileImage}`
+      : assets.user_icon || "/default-avatar.png"
+  }
+  alt="profile"
+  className="w-12 h-12 rounded-full object-cover border-2 border-gray-300"
+/>
+
       </button>
 
       {/* Dropdown */}
