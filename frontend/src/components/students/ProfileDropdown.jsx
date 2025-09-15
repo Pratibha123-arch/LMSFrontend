@@ -79,7 +79,7 @@ const ProfileDropdown = () => {
       });
 
       // Send FormData directly
-      await updateProfile(data); // updateProfile should accept FormData
+      await updateProfile(data); 
       setEditMode(false);
       alert("Profile updated successfully!");
     } catch (err) {
@@ -142,7 +142,7 @@ const ProfileDropdown = () => {
             </>
           ) : (
             <div className="space-y-2">
-              {/* ✅ File input name changed to profileImage */}
+              {/* File input name changed to profileImage */}
               <input
                 type="file"
                 name="profileImage"

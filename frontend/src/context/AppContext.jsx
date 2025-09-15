@@ -272,13 +272,14 @@ export const AppContextProvider = ({ children }) => {
   };
 
 const fetchProfile = async () => {
-  const token = localStorage.getItem("token"); // include token
+  const token = localStorage.getItem("token"); 
+  console.log("token....", token)
   if (!token) return;
 
   try {
     const res = await axios.get("http://13.233.183.81/api/auth/profile", {
       headers: {
-        Authorization: `Bearer ${token}`, // ✅ send token
+        Authorization: `Bearer ${token}`, 
       },
     });
     setUser(res.data.data);
@@ -288,7 +289,7 @@ const fetchProfile = async () => {
 };
 
 const updateProfile = async (formData) => {
-  const token = localStorage.getItem("token"); // make sure token is loaded
+  const token = localStorage.getItem("token"); 
   if (!token) throw new Error("User not logged in");
 
   try {
@@ -297,8 +298,8 @@ const updateProfile = async (formData) => {
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // send token
-          "Content-Type": "multipart/form-data", // only needed for file uploads
+          Authorization: `Bearer ${token}` 
+          // "Content-Type": "multipart/form-data", 
         },
       }
     );
