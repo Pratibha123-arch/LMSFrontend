@@ -98,7 +98,7 @@ const ProfileDropdown = () => {
         <img
   src={
     user?.profileImage
-      ? `http://13.233.183.81${user.profileImage}`
+      ? `http://13.233.183.81:5000${user.profileImage}`
       : assets.user_icon || "/default-avatar.png"
   }
   alt="profile"
