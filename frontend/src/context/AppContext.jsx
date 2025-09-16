@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import humanizeDuration from "humanize-duration";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 export const AppContext = createContext();
@@ -58,61 +59,107 @@ export const AppContextProvider = ({ children }) => {
   };
 
   // ===== Enroll in Course =====
-  // ===== Enroll in Course =====
-  const enrollInCourse = async (courseId) => {
-    if (!token) {
-      alert("Please login first!");
-      return;
-    }
+const enrollInCourse = async (courseId) => {
+  if (!token) {
+    toast.warning("Please login first!", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    return;
+  }
 
-    try {
-      const res = await axios.post(
-        `http://13.233.183.81/api/courses/${courseId}/enroll`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  try {
+    const res = await axios.post(
+      `http://13.233.183.81/api/courses/${courseId}/enroll`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      // Progress object (from backend)
-      const progress = res.data.data;
+    // Progress object (from backend)
+    const progress = res.data.data;
 
-      // Find full course from allCourses
-      const enrolledCourse = allCourses.find((c) => c._id === courseId);
+    // Find full course from allCourses
+    const enrolledCourse = allCourses.find((c) => c._id === courseId);
 
-      setEnrolledCourses((prev = []) => {
-        if (prev.some((c) => c._id === courseId)) return prev;
-        return enrolledCourse ? [...prev, enrolledCourse] : prev;
-      });
+    setEnrolledCourses((prev = []) => {
+      if (prev.some((c) => c._id === courseId)) return prev;
+      return enrolledCourse ? [...prev, enrolledCourse] : prev;
+    });
+    toast.success("Enrolled successfully!", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  } catch (err) {
+    console.error("Enroll failed:", err.response?.data || err.message);
 
-      alert("Enrolled successfully!");
-    } catch (err) {
-      console.error("Enroll failed:", err.response?.data || err.message);
-      alert("Enrollment failed!");
-    }
-  };
+
+    toast.error(err.response?.data?.message || "Enrollment failed!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  }
+};
+ 
 
   // ===== Progress & Topic Functions =====
-  const markTopicCompleted = async (courseId, topicId, timeSpent = 0) => {
-    try {
-      const res = await axios.post(
-        `http://13.233.183.81/api/progress/course/${courseId}/topic/${topicId}/complete`,
-        { timeSpent },
-        { withCredentials: true }
+ const markTopicCompleted = async (courseId, topicId, timeSpent = 0) => {
+  try {
+    const res = await axios.post(
+      `http://13.233.183.81/api/progress/course/${courseId}/topic/${topicId}/complete`,
+      { timeSpent },
+      { withCredentials: true }
+    );
+
+    if (res.data.success) {
+      // Update courses and progress
+      fetchUserEnrolledCourses();
+      setEnrolledCourses((prevCourses) =>
+        prevCourses.map((course) =>
+          course._id === courseId
+            ? { ...course, progress: res.data.progress }
+            : course
+        )
       );
 
-      if (res.data.success) {
-        fetchUserEnrolledCourses();
-        setEnrolledCourses((prevCourses) =>
-          prevCourses.map((course) =>
-            course._id === courseId
-              ? { ...course, progress: res.data.progress }
-              : course
-          )
-        );
-      }
-    } catch (err) {
-      console.error("Error marking topic completed:", err);
+      // ✅ Show success toast
+      toast.success("Topic marked as completed!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
-  };
+  } catch (err) {
+    console.error("Error marking topic completed:", err);
+
+    // ✅ Show error toast
+    toast.error(
+      err.response?.data?.message || "Failed to mark topic as completed!",
+      {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+  }
+};
 
   const updateCourseProgress = (courseId, topicId) => {
     setAllCourses((prev) =>
@@ -231,54 +278,140 @@ export const AppContextProvider = ({ children }) => {
 
   // ===== Auth =====
   const requestOtp = async (payload) => {
-    try {
-      const res = await axios.post(
-        "http://13.233.183.81/api/auth/request-otp",
-        payload
-      );
-      return res.data;
-    } catch (err) {
-      throw err.response?.data || err;
-    }
-  };
+  try {
+    const res = await axios.post(
+      "http://13.233.183.81/api/auth/request-otp",
+      payload
+    );
 
-  const verifyOtp = async (email, otp) => {
-    try {
-      const res = await axios.post(
-        "http://13.233.183.81/api/auth/verify-otp",
-        { email, otp }
-      );
-      const jwt = res.data.data.token;
-      const loggedUser = res.data.data.user;
-
-      localStorage.setItem("token", jwt);
-      setToken(jwt);
-      setUser(loggedUser);
-
-      return res.data;
-    } catch (err) {
-      throw (
-        err.response?.data || { message: err.message || "Something went wrong" }
-      );
-    }
-  };
-
-  const resendOtp = async (email, deliveryMethod = "email") => {
-    const res = await axios.post("http://13.233.183.81/api/auth/resend-otp", {
-      email,
-      deliveryMethod,
+    // ✅ Show success toast
+    toast.success("OTP sent successfully!", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
     });
+
+    return res.data;
+  } catch (err) {
+    console.error("OTP request failed:", err);
+
+    // ✅ Show error toast
+    toast.error(
+      err.response?.data?.message || "Failed to send OTP!",
+      {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+
+    throw err.response?.data || err;
+  }
+};
+
+const verifyOtp = async (email, otp) => {
+  try {
+    const res = await axios.post(
+      "http://13.233.183.81/api/auth/verify-otp",
+      { email, otp }
+    );
+
+    const jwt = res.data.data.token;
+    const loggedUser = res.data.data.user;
+
+    // Store token and user
+    localStorage.setItem("token", jwt);
+    setToken(jwt);
+    setUser(loggedUser);
+
+    // ✅ Show success toast
+    toast.success("OTP verified successfully! Logged in.", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+
+    return res.data;
+  } catch (err) {
+    console.error("OTP verification failed:", err.response?.data || err.message);
+
+    // ✅ Show error toast
+    toast.error(
+      err.response?.data?.message || "OTP verification failed!",
+      {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+
+    throw (
+      err.response?.data || { message: err.message || "Something went wrong" }
+    );
+  }
+};
+
+const resendOtp = async (email, deliveryMethod = "email") => {
+  try {
+    const res = await axios.post(
+      "http://13.233.183.81/api/auth/resend-otp",
+      { email, deliveryMethod }
+    );
+
+    // ✅ Show success toast
+    toast.success(
+      `OTP resent successfully via ${deliveryMethod}!`,
+      {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+
     return res.data.data;
-  };
+  } catch (err) {
+    console.error("Resend OTP failed:", err.response?.data || err.message);
+
+    // ✅ Show error toast
+    toast.error(
+      err.response?.data?.message || "Failed to resend OTP!",
+      {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+
+    throw err.response?.data || err;
+  }
+};
 
 const fetchProfile = async () => {
-  const token = localStorage.getItem("token"); // include token
+  const token = localStorage.getItem("token"); 
   if (!token) return;
 
   try {
     const res = await axios.get("http://13.233.183.81/api/auth/profile", {
       headers: {
-        Authorization: `Bearer ${token}`, // ✅ send token
+        Authorization: `Bearer ${token}`, //  send token
       },
     });
     setUser(res.data.data);
@@ -289,7 +422,17 @@ const fetchProfile = async () => {
 
 const updateProfile = async (formData) => {
   const token = localStorage.getItem("token"); // make sure token is loaded
-  if (!token) throw new Error("User not logged in");
+  if (!token) {
+    toast.warning("Please login to update your profile!", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    throw new Error("User not logged in");
+  }
 
   try {
     const { data } = await axios.put(
@@ -297,23 +440,46 @@ const updateProfile = async (formData) => {
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // send token
-          "Content-Type": "multipart/form-data", // only needed for file uploads
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       }
     );
 
     setUser({ ...data.data });
     localStorage.setItem("user", JSON.stringify(data.data));
+
+    // ✅ Show success toast
+    toast.success("Profile updated successfully!", {
+      position: "top-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+
     return data;
   } catch (error) {
-    console.error(
-      "Profile update error:",
-      error.response?.data || error.message
+    console.error("Profile update error:", error.response?.data || error.message);
+
+    // ✅ Show error toast
+    toast.error(
+      error.response?.data?.message || "Failed to update profile!",
+      {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
     );
+
     throw error;
   }
 };
+
   const logout = async () => {
     try {
       await axios.post(
@@ -404,7 +570,6 @@ const updateProfile = async (formData) => {
         }
       );
       const progressData = progressRes.data.data.progress || [];
-
       const enrolledStudentsData = progressData.map((p) => {
         const course = myCourses.find((c) => c._id === p.course) || {};
         return {
@@ -475,7 +640,7 @@ const updateProfile = async (formData) => {
         {}, // empty body
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      return res.data.data; // should include { quiz, questions, attemptNumber, attemptsRemaining }
+      return res.data.data; 
     } catch (err) {
       console.error("Error starting quiz:", err.response?.data || err.message);
       throw err;
@@ -532,7 +697,7 @@ const updateProfile = async (formData) => {
     return res.data.data;
   };
 
-  // ===== Effects =====
+  
   useEffect(() => {
     fetchAllCourses();
   }, []);

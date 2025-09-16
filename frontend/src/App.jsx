@@ -26,8 +26,11 @@ import CategoryDetails from "./components/categories/CategoryDetails";
 import AdminCategoryOverview from "./components/admin/AdminCategoryOverview";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 
-// ✅ Import ProtectedRoute
+
 import ProtectedRoute from "./components/common/ProtectedRoute";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const isTeacherRoute = useMatch("/teacher/*");
@@ -150,6 +153,19 @@ const App = () => {
         {/* Utility */}
         <Route path="/loading/:path" element={<Loading />} />
       </Routes>
+
+       <ToastContainer
+        position="top-right"
+        autoClose={3000}          // Auto close after 3 seconds
+        hideProgressBar={false}   // Show progress bar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"           // Colored theme like Udemy
+      />
     </div>
   );
 };
