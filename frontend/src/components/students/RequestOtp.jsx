@@ -1,4 +1,3 @@
-// src/components/students/RequestOtp.jsx
 import React, { useState, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const RequestOtp = () => {
   const { requestOtp } = useContext(AppContext);
 
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [mode, setMode] = useState("login"); 
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,7 +19,6 @@ const RequestOtp = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Email
     if (!email) {
       newErrors.email = "Email is required";
     } else {

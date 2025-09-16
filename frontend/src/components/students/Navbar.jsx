@@ -55,20 +55,12 @@ const Navbar = () => {
           {user ? (
             <ProfileDropdown />
           ) : (
-            <>
-              <button
-                onClick={() => navigate("/request-otp")}
-                className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition"
-              >
-                Request OTP
-              </button>
-              <button
-                onClick={() => navigate("/verify-otp")}
-                className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition"
-              >
-                Verify OTP
-              </button>
-            </>
+            <button
+              onClick={() => navigate("/request-otp")}
+              className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition"
+            >
+              Request OTP
+            </button>
           )}
         </div>
 
@@ -134,15 +126,6 @@ const Navbar = () => {
                 className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition"
               >
                 Request OTP
-              </button>
-              <button
-                onClick={() => {
-                  navigate("/verify-otp");
-                  setMobileOpen(false);
-                }}
-                className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition"
-              >
-                Verify OTP
               </button>
             </div>
           )}

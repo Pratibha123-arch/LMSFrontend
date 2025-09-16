@@ -12,7 +12,6 @@ const VerifyOtp = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Prefill email if coming from Request OTP
   useEffect(() => {
     if (location.state?.email) {
       setEmail(location.state.email);
@@ -29,10 +28,10 @@ const VerifyOtp = () => {
     setMessage("");
 
     try {
-      const res = await verifyOtp(email, otp); // verifyOtp sets token in localStorage
+      const res = await verifyOtp(email, otp); 
       if (res?.data) {
         setMessage("OTP Verified! Logged in successfully");
-        navigate("/"); // redirect to homepage
+        navigate("/"); 
       }
     } catch (err) {
       console.error(err);
