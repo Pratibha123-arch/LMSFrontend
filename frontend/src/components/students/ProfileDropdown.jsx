@@ -84,7 +84,6 @@ const ProfileDropdown = () => {
       // Send FormData directly
       await updateProfile(data); // updateProfile should accept FormData
       setEditMode(false);
-      toast.success("Profile updated successfully!");
     } catch (err) {
       console.error("Profile update error:", err);
       console.log("Failed to update profile. Please try again.");
