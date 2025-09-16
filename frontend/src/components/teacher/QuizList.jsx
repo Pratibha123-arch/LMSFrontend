@@ -2,6 +2,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../../context/AppContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const QuizList = () => {
   const { token } = useContext(AppContext);
@@ -39,7 +42,7 @@ const QuizList = () => {
       setQuizDetails(res.data.data);
     } catch (err) {
       console.error("Error fetching quiz:", err.response?.data || err);
-      alert("Failed to fetch quiz");
+      console.log("Failed to fetch quiz");
     }
   };
 
@@ -72,7 +75,7 @@ const QuizList = () => {
       setQuizStats({ id, data: res.data.data }); // store stats by quiz id
     } catch (err) {
       console.error("Error fetching quiz stats:", err.response?.data || err);
-      alert(err.response?.data?.message || "Failed to fetch quiz stats");
+      // console.log(err.response?.data?.message || "Failed to fetch quiz stats");
     } finally {
       setStatsLoading(false);
     }
@@ -97,12 +100,12 @@ const QuizList = () => {
       await axios.put(`http://13.233.183.81/api/quizzes/${id}`, editForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Quiz updated successfully");
+      toast.success("Quiz updated successfully");
       setEditingQuiz(null);
       fetchQuizzes();
     } catch (err) {
       console.error("Error updating quiz:", err.response?.data || err);
-      alert(err.response?.data?.message || "Failed to update quiz");
+      // alert(err.response?.data?.message || "Failed to update quiz");
     }
   };
 
@@ -114,11 +117,11 @@ const QuizList = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert(" Quiz deleted successfully");
-      fetchQuizzes(); // refresh list after delete
+      toast.success(" Quiz deleted successfully");
+      fetchQuizzes(); 
     } catch (err) {
       console.error("Error deleting quiz:", err.response?.data || err);
-      alert(err.response?.data?.message || "Failed to delete quiz");
+      // alert(err.response?.data?.message || "Failed to delete quiz");
     }
   };
 
@@ -131,7 +134,7 @@ const QuizList = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert(res.data.message);
+      // alert(res.data.message);
 
       // Update quiz state locally without refetching all quizzes
       setQuizzes((prev) =>
@@ -147,7 +150,7 @@ const QuizList = () => {
       );
     } catch (err) {
       console.error("Error toggling publish:", err.response?.data || err);
-      alert(err.response?.data?.message || "Failed to toggle publish");
+      // alert(err.response?.data?.message || "Failed to toggle publish");
     }
   };
 

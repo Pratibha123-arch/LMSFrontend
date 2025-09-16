@@ -36,7 +36,7 @@ const StudentProgress = () => {
       setPagination(res.data.data.pagination || {});
     } catch (err) {
       console.error("Error fetching progress:", err.response?.data || err);
-      alert("Failed to fetch progress");
+      // alert("Failed to fetch progress");
     } finally {
       setLoading(false);
     }

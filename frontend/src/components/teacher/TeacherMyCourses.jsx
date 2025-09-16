@@ -48,7 +48,8 @@ const TeacherMyCourses = () => {
       );
       setEditingCourseId(null);
     } catch (err) {
-      alert(err.response?.data?.message || err.message);
+      console.log(err)
+      // alert(err.response?.data?.message || err.message);
     }
   };
 
@@ -63,7 +64,8 @@ const TeacherMyCourses = () => {
     // Remove the deleted course from state
     setCourses(prev => prev.filter(c => c._id !== courseId));
   } catch (err) {
-    alert(err.response?.data?.message || err.message);
+    console.log(err)
+    // alert(err.response?.data?.message || err.message);
   }
 };
 
@@ -83,6 +85,7 @@ const handleTogglePublish = async (courseId) => {
       )
     );
   } catch (err) {
+    console.log(err)
     alert(err.response?.data?.message || err.message);
   }
 };

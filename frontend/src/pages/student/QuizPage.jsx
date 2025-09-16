@@ -55,7 +55,7 @@ const QuizPage = () => {
         }
       } catch (error) {
         console.error("Failed to fetch quiz or attempts", error);
-        alert(error.response?.data?.message || error.message);
+        // alert(error.response?.data?.message || error.message);
         navigate("/quiz-list");
       } finally {
         setLoading(false);
@@ -81,7 +81,8 @@ const QuizPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!quizId) return alert("Quiz ID missing");
+    if (!quizId) 
+      //return alert("Quiz ID missing");
     setSubmitting(true);
 
     try {
@@ -96,7 +97,7 @@ const QuizPage = () => {
       setResult(res.data.data);
     } catch (error) {
       console.error("Submit failed", error);
-      alert(error.response?.data?.message || error.message);
+      // alert(error.response?.data?.message || error.message);
     } finally {
       setSubmitting(false);
     }

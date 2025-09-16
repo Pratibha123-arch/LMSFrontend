@@ -1,6 +1,9 @@
 // src/pages/teacher/TeacherMessages.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { AppContext } from "../../context/AppContext";
 
 const AdminMessageTemplate = () => {
@@ -96,7 +99,6 @@ const AdminMessageTemplate = () => {
       }
     } catch (error) {
       console.error("Error fetching template by ID:", error);
-      alert("Template not found");
       setSelectedTemplate(null);
     } finally {
       setLoading(false);
@@ -124,13 +126,12 @@ const AdminMessageTemplate = () => {
       );
 
       if (res.data.success) {
-        alert("Template updated successfully");
+        toast.success("Template updated successfully");
         setEditingTemplate(null); // close edit form
         fetchTemplates(); // refresh template list
       }
     } catch (error) {
       console.error("Error updating template:", error);
-      alert("Failed to update template");
     } finally {
       setLoading(false);
     }
@@ -150,19 +151,17 @@ const AdminMessageTemplate = () => {
       );
 
       if (res.data.success) {
-        alert(res.data.message);
         fetchTemplates();
       }
     } catch (error) {
       console.error("Error deleting template:", error);
-      alert("Failed to delete template");
     } finally {
       setLoading(false);
     }
   };
 
   const handlePreviewClick = async () => {
-    if (!previewTemplateId) return alert("Enter Template ID");
+    if (!previewTemplateId) return console.log("Enter Template ID");
 
     try {
       setLoadingPreview(true);
@@ -179,7 +178,6 @@ const AdminMessageTemplate = () => {
       }
     } catch (error) {
       console.error("Preview failed:", error);
-      alert("Failed to preview template");
     } finally {
       setLoadingPreview(false);
     }
@@ -187,7 +185,7 @@ const AdminMessageTemplate = () => {
 
   const handleTestClick = async () => {
     if (!testTemplateId || !testEmail)
-      return alert("Enter Template ID and Email");
+      return console.log("Enter Template ID and Email");
 
     try {
       setLoadingTest(true);
@@ -202,7 +200,6 @@ const AdminMessageTemplate = () => {
       }
     } catch (error) {
       console.error("Test failed:", error);
-      alert("Failed to send test message");
     } finally {
       setLoadingTest(false);
     }
@@ -236,7 +233,7 @@ const AdminMessageTemplate = () => {
       );
 
       if (res.data.success) {
-        alert("Template created successfully");
+      ("Template created successfully");
         setNewTemplate({
           name: "",
           type: "reminder",
@@ -250,7 +247,6 @@ const AdminMessageTemplate = () => {
       }
     } catch (error) {
       console.error("Error creating template:", error);
-      alert("Failed to create template");
     } finally {
       setLoading(false);
     }

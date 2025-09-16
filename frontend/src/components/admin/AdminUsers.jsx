@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { AppContext } from "../../context/AppContext";
 
 const AdminUsers = () => {
@@ -79,94 +80,112 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
   };
 
   const handleCreateUser = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await axios.post("http://13.233.183.81/api/admin/users", newUser, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("User created successfully!");
-      setNewUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        role: "student",
-      });
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to create user");
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await axios.post("http://13.233.183.81/api/admin/users", newUser, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    toast.success("User created successfully!", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+
+    setNewUser({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      role: "student",
+    });
+
+    fetchUsers();
+  } catch (err) {
+    console.error(err);
+    toast.error(err.response?.data?.message || "Failed to create user", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleUpdateUser = async (e) => {
-    e.preventDefault();
-    if (!editingUser) return;
+  e.preventDefault();
+  if (!editingUser) return;
 
-    try {
-      await axios.put(
-        `http:/13.233.183.81/api/admin/users/${editingUser._id}`,
-        editingUser,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("User updated successfully!");
-      setEditingUser(null);
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to update user");
-    }
-  };
+  try {
+    await axios.put(
+      `http://13.233.183.81/api/admin/users/${editingUser._id}`, // ✅ fixed URL
+      editingUser,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    toast.success("User updated successfully!"); // ✅ toast
+    setEditingUser(null);
+    fetchUsers();
+  } catch (err) {
+    console.error("Error updating user:", err);
+    toast.error(err.response?.data?.message || "Failed to update user"); // ✅ toast
+  }
+};
 
   const handleEditClick = async (userId) => {
-    try {
-      const res = await axios.get(
-        `http://13.233.183.81/api/admin/users/${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setEditingUser(res.data.data.user);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to fetch user details.");
-    }
-  };
+  try {
+    const res = await axios.get(
+      `http://13.233.183.81/api/admin/users/${userId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setEditingUser(res.data.data.user);
+  } catch (err) {
+    console.error("Error fetching user details:", err);
+    toast.error("Failed to fetch user details."); 
+  }
+};
 
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-    try {
-      await axios.delete(`http://13.233.183.81/api/admin/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("User deleted successfully!");
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to delete user");
-    }
-  };
+const handleDeleteUser = async (userId) => {
+  if (!window.confirm("Are you sure you want to delete this user?")) return;
 
-  const handleToggleStatus = async (userId) => {
-    try {
-      const res = await axios.patch(
-        `http://13.233.183.81/api/admin/users/${userId}/toggle-status`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  try {
+    await axios.delete(`http://13.233.183.81/api/admin/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      const updatedStatus =
-        res.data.data.isActive === true || res.data.data.isActive === "true";
+    toast.success("User deleted successfully!"); 
+    fetchUsers();
+  } catch (err) {
+    console.error("Delete user error:", err);
+    console.log(err.response?.data?.message || "Failed to delete user"); 
+  }
+};
 
-      setUsers((prev) =>
-        prev.map((u) => (u._id === userId ? { ...u, isActive: updatedStatus } : u))
-      );
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to toggle status");
-    }
-  };
+const handleToggleStatus = async (userId) => {
+  try {
+    const res = await axios.patch(
+      `http://13.233.183.81/api/admin/users/${userId}/toggle-status`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const updatedStatus =
+      res.data.data.isActive === true || res.data.data.isActive === "true";
+
+    setUsers((prev) =>
+      prev.map((u) =>
+        u._id === userId ? { ...u, isActive: updatedStatus } : u
+      )
+    );
+
+    toast.success(
+      `User status updated to ${updatedStatus ? "Active" : "Inactive"}`
+    );
+  } catch (err) {
+    console.error("Toggle status error:", err);
+    toast.error(err.response?.data?.message || "Failed to toggle status"); 
+  }
+};
 
   const handleResetPasswordClick = (userId) => {
     setResetUserId(userId);
@@ -174,21 +193,28 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
   };
 
   const handleResetPassword = async () => {
-    if (!newPassword) return alert("Enter a new password");
-    try {
-      await axios.patch(
-        `http://13.233.183.81/api/admin/users/${resetUserId}/reset-password`,
-        { newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Password reset successfully!");
-      setResetUserId(null);
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to reset password");
-    }
-  };
+  if (!newPassword) {
+    setError("Enter a new password"); // inline error
+    return;
+  }
 
+  try {
+    setError(""); // clear previous error
+    await axios.patch(
+      `http://13.233.183.81/api/admin/users/${resetUserId}/reset-password`,
+      { newPassword },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Success toast
+    toast.success("Password reset successfully!");
+    setResetUserId(null);
+  } catch (err) {
+    console.error(err);
+    // Show inline error text
+    setError(err.response?.data?.message || "Failed to reset password");
+  }
+};
   // --- Fetch users ---
   const fetchUsers = async () => {
     setLoading(true);
@@ -258,12 +284,12 @@ const totalTeacherPages = Math.ceil(teachers.length / teachersPerPage) || 1;
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    alert("User promoted to Teacher successfully!");
+    toast.success("User promoted to Teacher successfully!");
     fetchUsers();
     fetchTeachers();
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.message || "Failed to promote user.");
+    console.log(err.response?.data?.message || "Failed to promote user.");
   }
 };
 

@@ -84,7 +84,7 @@ const AdminMessageTemplate = () => {
       }
     } catch (error) {
       console.error("Error fetching template by ID:", error);
-      alert("Template not found");
+      // alert("Template not found");
       setSelectedTemplate(null);
     } finally {
       setLoading(false);
@@ -93,7 +93,8 @@ const AdminMessageTemplate = () => {
 
 
   const handlePreviewClick = async () => {
-    if (!previewTemplateId) return alert("Enter Template ID");
+    if (!previewTemplateId) 
+      // return alert("Enter Template ID");
 
     try {
       setLoadingPreview(true);
@@ -110,7 +111,7 @@ const AdminMessageTemplate = () => {
       }
     } catch (error) {
       console.error("Preview failed:", error);
-      alert("Failed to preview template");
+      // alert("Failed to preview template");
     } finally {
       setLoadingPreview(false);
     }

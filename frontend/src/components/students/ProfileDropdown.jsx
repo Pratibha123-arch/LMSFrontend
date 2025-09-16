@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const ProfileDropdown = () => {
   const { user, updateProfile, logout } = useContext(AppContext);
@@ -81,10 +84,10 @@ const ProfileDropdown = () => {
       // Send FormData directly
       await updateProfile(data); // updateProfile should accept FormData
       setEditMode(false);
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     } catch (err) {
       console.error("Profile update error:", err);
-      alert("Failed to update profile. Please try again.");
+      console.log("Failed to update profile. Please try again.");
     }
   };
 

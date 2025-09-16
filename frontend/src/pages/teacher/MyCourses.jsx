@@ -78,9 +78,10 @@ const MyCourses = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      fetchAllCourses(); // refresh after delete
+      fetchAllCourses();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete course");
+      console.log(err)
+      // alert(err.response?.data?.message || "Failed to delete course");
     } finally {
       setLoadingDelete(null);
     }
@@ -96,7 +97,8 @@ const MyCourses = () => {
       );
       fetchAllCourses(); // refresh courses
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to toggle publish status");
+      console.log(error)
+      // alert(error.response?.data?.message || "Failed to toggle publish status");
     } finally {
       setLoadingPublish(null);
     }

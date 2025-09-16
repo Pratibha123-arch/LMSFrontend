@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const AddQuiz = () => {
   const { token, allCourses, fetchAllCourses, fetchQuizzes } = useAppContext();
@@ -60,12 +63,12 @@ const AddQuiz = () => {
           "Content-Type": "application/json",
         },
       });
-      alert("Quiz created successfully!");
+      toast.success("Quiz created successfully!");
       console.log(res.data);
       fetchQuizzes();
     } catch (err) {
       console.error("Error adding quiz:", err.response?.data || err);
-      alert(err.response?.data?.message || "Failed to create quiz");
+      // alert(err.response?.data?.message || "Failed to create quiz");
     }
   };
 

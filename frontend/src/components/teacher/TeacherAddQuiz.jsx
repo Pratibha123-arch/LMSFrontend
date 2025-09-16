@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const QUESTION_TYPES = {
   MULTIPLE_CHOICE: "multiple-choice",
@@ -69,7 +71,7 @@ const handleSubmit = async (e) => {
       },
     });
 
-    alert("Quiz created successfully!");
+    toast.success("Quiz created successfully!");
     
     // Call parent callback to update Quiz List immediately
     if (onQuizCreated) {
@@ -94,7 +96,7 @@ const handleSubmit = async (e) => {
 
   } catch (err) {
     console.error("Error adding quiz:", err.response?.data || err);
-    alert(err.response?.data?.message || "Failed to create quiz");
+    // alert(err.response?.data?.message || "Failed to create quiz");
   }
 };
 
